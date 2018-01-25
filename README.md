@@ -62,15 +62,15 @@ public class ProgramController {
     private void switchToProgramOpen() {
         programOpen = true;
 
-        INSTANCE.VBVMR_SetParameterFloat(getStringPointer("Strip[0].gain"), strip0GainProgramOpen);
-        INSTANCE.VBVMR_SetParameterFloat(getStringPointer("Strip[0].comp"), strip0CompProgramOpen);
+        setParameter("Strip[0].gain", strip0GainProgramOpen);
+        setParameter("Strip[0].comp", strip0CompProgramOpen);
     }
 
     private void switchToDefault() {
         programOpen = false;
 
-        INSTANCE.VBVMR_SetParameterFloat(getStringPointer("Strip[0].gain"), strip0GainDefault);
-        INSTANCE.VBVMR_SetParameterFloat(getStringPointer("Strip[0].comp"), strip0CompDefault);
+        setParameter("Strip[0].gain", strip0GainDefault);
+        setParameter("Strip[0].comp", strip0CompDefault);
     }
 
     private String[] getOpenPrograms() {
