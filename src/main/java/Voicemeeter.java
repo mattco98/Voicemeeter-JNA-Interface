@@ -7,8 +7,8 @@ import lombok.Data;
 public class Voicemeeter {
     private VoicemeeterInstance instance;
 
-    public String DEFAULT_VM_WINDOWS_64BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote64.dll";
-    public String DEFAULT_VM_WINDOWS_32BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote.dll";
+    public static String DEFAULT_VM_WINDOWS_64BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote64.dll";
+    public static String DEFAULT_VM_WINDOWS_32BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote.dll";
 
     public Voicemeeter(String voicemeeterRemoteDllPath, boolean is64Bit) {
         System.load(voicemeeterRemoteDllPath);

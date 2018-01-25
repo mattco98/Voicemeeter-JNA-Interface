@@ -14,22 +14,15 @@ when I had a certain program open, and return the values to default when I close
 program. Here is an example of such a program using this interface:
 
 ```java
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static VoicemeeterInstance.INSTANCE;
-
 public class ProgramController {
+    private Voicemeeter vm;
+    
     private final String programName = "program.exe";
     private final float strip0GainDefault = 0.0f;
     private final float strip0CompDefault = 0.0f;
     private final float strip0GainProgramOpen = -6.0f;
     private final float strip0CompProgramOpen = 4.5f;
+    
     private boolean programOpen = false;
 
     public static void main(String[] args) {
@@ -37,8 +30,7 @@ public class ProgramController {
     }
 
     private void init() {
-        VoiVoicemeeterInstancestance
-        INSTANCE.VBVMR_Login();
+        vm = new Voicemeeter(Voicemeeter.DEFAULT_VM_WINDOWS_64BIT_PATH, true);
 
         whileLoop:
         while (true) {
@@ -50,7 +42,7 @@ public class ProgramController {
 
             for (String str : getOpenPrograms()) {
                 if (str.equals(programName)) {
-                    if (!programOpen) switchToProramOpen();
+                    if (!programOpen) switchToProgramOpen();
                     continue whileLoop;
                 }
             }
@@ -62,27 +54,20 @@ public class ProgramController {
     private void switchToProgramOpen() {
         programOpen = true;
 
-        setParameter("Strip[0].gain", strip0GainProgramOpen);
-        setParameter("Strip[0].comp", strip0CompProgramOpen);
+        vm.setParameterFloat("Strip[0].gain", strip0GainProgramOpen);
+        vm.setParameterFloat("Strip[0].comp", strip0CompProgramOpen);
     }
 
     private void switchToDefault() {
         programOpen = false;
 
-        setParameter("Strip[0].gain", strip0GainDefault);
-        setParameter("Strip[0].comp", strip0CompDefault);
+        vm.setParameterFloat("Strip[0].gain", strip0GainDefault);
+        vm.setParameterFloat("Strip[0].comp", strip0CompDefault);
     }
 
     private String[] getOpenPrograms() {
-        // List open processes and return list of names
-    }
-
-    private int setParameter(String parameter, float value) {
-        int size = parameter.getBytes().length + 1;
-        Memory m = new Memory(size);
-        m.setString(0, parameter);
-        
-        return INSTANCE.VBVMR_SetParameterFloat(m, value);
+        // Return array of program names. Implementation will differ between 
+        // different operating systems. 
     }
 }
 ```
