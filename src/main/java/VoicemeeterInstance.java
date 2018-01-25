@@ -14,19 +14,7 @@ import java.util.List;
  * VoicemeeterRemote.h header file.
  */
 @SuppressWarnings("unused")
-public interface VMInstance extends StdCallLibrary {
-
-    //******************************************************************************//
-    //*                                  Instance                                  *//
-    //******************************************************************************//
-
-    VMInstance INSTANCE = getInstance();
-
-    static VMInstance getInstance() {
-        // Default installation directory
-        System.load("C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote64.dll");
-        return Native.loadLibrary("VoicemeeterRemote64", VMInstance.class);
-    }
+public interface VoicemeeterInstance extends StdCallLibrary {
 
     //******************************************************************************//
     //*                                    Login                                   *//
@@ -301,7 +289,7 @@ public interface VMInstance extends StdCallLibrary {
      *              0: OK (no error)
      */
     int VBVMR_Output_GetDeviceDescA(int index, Pointer type, Pointer deviceName, Pointer hardwareId);
-    int VBVMR_Output_GetDeviecDescW(int index, Pointer type, Pointer deviceName, Pointer hardwareId);
+    int VBVMR_Output_GetDeviceDescW(int index, Pointer type, Pointer deviceName, Pointer hardwareId);
 
     /**
      * Gets the number of audio input device available on the system
@@ -324,7 +312,7 @@ public interface VMInstance extends StdCallLibrary {
      *              0: OK (no error)
      */
     int VBVMR_Input_GetDeviceDescA(int index, Pointer type, Pointer deviceName, Pointer hardwareId);
-    int VBVMR_Input_GetDeviecDescW(int index, Pointer type, Pointer deviceName, Pointer hardwareId);
+    int VBVMR_Input_GetDeviceDescW(int index, Pointer type, Pointer deviceName, Pointer hardwareId);
 
 
     //******************************************************************************//

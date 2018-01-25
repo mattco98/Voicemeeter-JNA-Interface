@@ -22,7 +22,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static VMInstance.INSTANCE;
+import static VoicemeeterInstance.INSTANCE;
 
 public class ProgramController {
     private final String programName = "program.exe";
@@ -37,7 +37,7 @@ public class ProgramController {
     }
 
     private void init() {
-        // VMInstance.INSTANCE
+        VoiVoicemeeterInstancestance
         INSTANCE.VBVMR_Login();
 
         whileLoop:
