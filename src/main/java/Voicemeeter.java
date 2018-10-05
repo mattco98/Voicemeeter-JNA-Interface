@@ -5,29 +5,29 @@ import lombok.Data;
 
 @SuppressWarnings("Duplicates")
 public class Voicemeeter {
-    private VoicemeeterInstance instance;
+    private static VoicemeeterInstance instance;
 
     public static String DEFAULT_VM_WINDOWS_64BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote64.dll";
     public static String DEFAULT_VM_WINDOWS_32BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote.dll";
 
-    public Voicemeeter() {
-        this(true);
+    public static void init() {
+        init(true);
     }
 
-    public Voicemeeter(boolean is64Bit) {
-        this(is64Bit, is64Bit ? DEFAULT_VM_WINDOWS_64BIT_PATH : DEFAULT_VM_WINDOWS_32BIT_PATH);
+    public static void init(boolean is64bit) {
+        init(is64bit, is64bit ? DEFAULT_VM_WINDOWS_64BIT_PATH : DEFAULT_VM_WINDOWS_32BIT_PATH);
     }
 
-    public Voicemeeter(boolean is64Bit, String vmWindowsPath) {
+    public static void init(boolean is64bit, String vmWindowsPath) {
         System.load(vmWindowsPath);
-        instance = Native.loadLibrary("VoicemeeterRemote" + (is64Bit ? "64" : ""), VoicemeeterInstance.class);
+        instance = Native.loadLibrary("VoicemeeterRemote" + (is64bit ? "64" : ""), VoicemeeterInstance.class);
     }
 
-    public Voicemeeter(VoicemeeterInstance voicemeeterInstance) {
+    public static void init(VoicemeeterInstance voicemeeterInstance) {
         instance = voicemeeterInstance;
     }
 
-    public void login() throws VoicemeeterException {
+    public static void login() throws VoicemeeterException {
         int val = instance.VBVMR_Login();
         switch (val) {
             case 0:
@@ -43,14 +43,14 @@ public class Voicemeeter {
         }
     }
 
-    public void logout() {
+    public static void logout() {
         int val = instance.VBVMR_Logout();
         if (val != 0) {
             throw new VoicemeeterException("Unexpected function reutrn value. Function returned " + val);
         }
     }
 
-    public void runVoicemeeter(int type) {
+    public static void runVoicemeeter(int type) {
         int val = instance.VBVMR_RunVoicemeeter(type);
         switch (val) {
             case 0:
@@ -62,7 +62,7 @@ public class Voicemeeter {
         }
     }
 
-    public int getVoicemeeterType() {
+    public static int getVoicemeeterType() {
         Pointer type = getPointer(4);
         int val = instance.VBVMR_GetVoicemeeterType(type);
         switch (val) {
@@ -77,7 +77,7 @@ public class Voicemeeter {
         }
     }
 
-    public int getVoicemeeterVersion() {
+    public static int getVoicemeeterVersion() {
         Pointer version = getPointer(4);
         int val = instance.VBVMR_GetVoicemeeterVersion(version);
         switch (val) {
@@ -92,7 +92,7 @@ public class Voicemeeter {
         }
     }
 
-    public boolean areParametersDirty() {
+    public static boolean areParametersDirty() {
         int val = instance.VBVMR_IsParametersDirty();
         switch (val) {
             case 0:
@@ -108,7 +108,7 @@ public class Voicemeeter {
         }
     }
 
-    public float getParameterFloat(String parameterName) {
+    public static float getParameterFloat(String parameterName) {
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getPointer(4);
         int val = instance.VBVMR_GetParameterFloat(paramName, paramValue);
@@ -129,7 +129,7 @@ public class Voicemeeter {
         }
     }
 
-    public String getParameterStringA(String parameterName) {
+    public static String getParameterStringA(String parameterName) {
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getPointer(8);
         int val = instance.VBVMR_GetParameterStringA(paramName, paramValue);
@@ -150,7 +150,7 @@ public class Voicemeeter {
         }
     }
 
-    public String getParameterStringW(String parameterName) {
+    public static String getParameterStringW(String parameterName) {
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getPointer(8);
         int val = instance.VBVMR_GetParameterStringW(paramName, paramValue);
@@ -171,7 +171,7 @@ public class Voicemeeter {
         }
     }
 
-    public float getLevel(int type, int channel) {
+    public static float getLevel(int type, int channel) {
         Pointer levelValue = getPointer(4);
         int val = instance.VBVMR_GetLevel(type, channel, levelValue);
 
@@ -191,7 +191,7 @@ public class Voicemeeter {
         }
     }
 
-    public byte[] getMidiMessage(int size) {
+    public static byte[] getMidiMessage(int size) {
         Pointer midiMessage = getPointer(size);
         int val = instance.VBVMR_GetMidiMessage(midiMessage, size);
 
@@ -211,7 +211,7 @@ public class Voicemeeter {
         }
     }
 
-    public void setParameterFloat(String parameterName, float value) {
+    public static void setParameterFloat(String parameterName, float value) {
         Pointer paramName = getStringPointer(parameterName);
         int val = instance.VBVMR_SetParameterFloat(paramName, value);
 
@@ -229,7 +229,7 @@ public class Voicemeeter {
         }
     }
 
-    public void setParameterStringA(String parameterName, String value) {
+    public static void setParameterStringA(String parameterName, String value) {
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getStringPointer(value);
         int val = instance.VBVMR_SetParameterStringA(paramName, paramValue);
@@ -248,7 +248,7 @@ public class Voicemeeter {
         }
     }
 
-    public void setParameterStringW(String parameterName, String value) {
+    public static void setParameterStringW(String parameterName, String value) {
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getStringPointer(value);
         int val = instance.VBVMR_SetParameterStringW(paramName, paramValue);
@@ -267,7 +267,7 @@ public class Voicemeeter {
         }
     }
 
-    public void setParameters(String script) {
+    public static void setParameters(String script) {
         Pointer stringPointer = getStringPointer(script);
         int val = instance.VBVMR_SetParameters(stringPointer);
 
@@ -288,7 +288,7 @@ public class Voicemeeter {
         }
     }
 
-    public void setParametersW(String script) {
+    public static void setParametersW(String script) {
         Pointer stringPointer = getStringPointer(script);
         int val = instance.VBVMR_SetParametersW(stringPointer);
 
@@ -309,7 +309,7 @@ public class Voicemeeter {
         }
     }
 
-    public int getNumberOfAudioDevices(boolean areInputDevices) {
+    public static int getNumberOfAudioDevices(boolean areInputDevices) {
         if (areInputDevices) {
             return instance.VBVMR_Input_GetDeviceNumber();
         } else {
@@ -317,7 +317,7 @@ public class Voicemeeter {
         }
     }
 
-    public DeviceDescription getAudioDeviceDescriptionA(int index, boolean isInputDevice) {
+    public static DeviceDescription getAudioDeviceDescriptionA(int index, boolean isInputDevice) {
         int val;
         Pointer type = getPointer(4);
         Pointer name = getPointer(4);
@@ -341,7 +341,7 @@ public class Voicemeeter {
         return desc;
     }
 
-    public DeviceDescription getOutputDeviceDescriptionW(int index, boolean isInputDevice) {
+    public static DeviceDescription getOutputDeviceDescriptionW(int index, boolean isInputDevice) {
         int val;
         Pointer type = getPointer(4);
         Pointer name = getPointer(4);
@@ -366,20 +366,20 @@ public class Voicemeeter {
     }
 
     @Data
-    private class DeviceDescription {
+    private static class DeviceDescription {
         private int type;
         private String name;
         private String hardwareId;
     }
 
-    private Pointer getStringPointer(String str) {
+    private static Pointer getStringPointer(String str) {
         int size = str.getBytes().length + 1;
         Memory m = new Memory(size);
         m.setString(0, str);
         return m;
     }
 
-    private Pointer getPointer(int size) {
+    private static Pointer getPointer(int size) {
         return new Memory(size);
     }
 }
