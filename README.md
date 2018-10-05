@@ -14,15 +14,15 @@ when I had a certain program open, and return the values to default when I close
 program. Here is an example of such a program using this interface:
 
 ```java
+import java.util.Arrays;
+
 public class ProgramController {
-    private Voicemeeter vm;
-    
     private final String programName = "program.exe";
     private final float strip0GainDefault = 0.0f;
     private final float strip0CompDefault = 0.0f;
     private final float strip0GainProgramOpen = -6.0f;
     private final float strip0CompProgramOpen = 4.5f;
-    
+
     private boolean programOpen = false;
 
     public static void main(String[] args) {
@@ -30,44 +30,44 @@ public class ProgramController {
     }
 
     private void init() {
-        vm = new Voicemeeter(Voicemeeter.DEFAULT_VM_WINDOWS_64BIT_PATH, true);
+        Voicemeeter.init(true);
 
-        whileLoop:
         while (true) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                System.exit(1);
             }
 
-            for (String str : getOpenPrograms()) {
-                if (str.equals(programName)) {
-                    if (!programOpen) switchToProgramOpen();
-                    continue whileLoop;
-                }
-            }
-
-            if (programOpen) switchToDefault();
+            if (Arrays.asList(getOpenPrograms()).contains(programName))
+                switchToProgramOpen();
+            else
+                switchToProgramClosed();
         }
     }
 
     private void switchToProgramOpen() {
-        programOpen = true;
+        if (!programOpen) {
+            programOpen = true;
 
-        vm.setParameterFloat("Strip[0].gain", strip0GainProgramOpen);
-        vm.setParameterFloat("Strip[0].comp", strip0CompProgramOpen);
+            Voicemeeter.setParameterFloat("Strip[0].gain", strip0GainProgramOpen);
+            Voicemeeter.setParameterFloat("Strip[0].comp", strip0CompProgramOpen);
+        }
     }
 
-    private void switchToDefault() {
-        programOpen = false;
+    private void switchToProgramClosed() {
+        if (programOpen) {
+            programOpen = false;
 
-        vm.setParameterFloat("Strip[0].gain", strip0GainDefault);
-        vm.setParameterFloat("Strip[0].comp", strip0CompDefault);
+            Voicemeeter.setParameterFloat("Strip[0].gain", strip0GainDefault);
+            Voicemeeter.setParameterFloat("Strip[0].comp", strip0CompDefault);
+        }
     }
 
     private String[] getOpenPrograms() {
-        // Return array of program names. Implementation will differ between 
-        // different operating systems. 
+        // Return array of program names. Implementation will differ between
+        // different operating systems.
     }
 }
 ```
