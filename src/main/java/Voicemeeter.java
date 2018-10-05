@@ -10,8 +10,16 @@ public class Voicemeeter {
     public static String DEFAULT_VM_WINDOWS_64BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote64.dll";
     public static String DEFAULT_VM_WINDOWS_32BIT_PATH = "C:/Program Files (x86)/VB/Voicemeeter/VoicemeeterRemote.dll";
 
-    public Voicemeeter(String voicemeeterRemoteDllPath, boolean is64Bit) {
-        System.load(voicemeeterRemoteDllPath);
+    public Voicemeeter() {
+        this(true);
+    }
+
+    public Voicemeeter(boolean is64Bit) {
+        this(is64Bit, is64Bit ? DEFAULT_VM_WINDOWS_64BIT_PATH : DEFAULT_VM_WINDOWS_32BIT_PATH);
+    }
+
+    public Voicemeeter(boolean is64Bit, String vmWindowsPath) {
+        System.load(vmWindowsPath);
         instance = Native.loadLibrary("VoicemeeterRemote" + (is64Bit ? "64" : ""), VoicemeeterInstance.class);
     }
 
@@ -20,8 +28,8 @@ public class Voicemeeter {
     }
 
     public void login() throws VoicemeeterException {
-        int val;
-        switch (val = instance.VBVMR_Login()) {
+        int val = instance.VBVMR_Login();
+        switch (val) {
             case 0:
                 break;
             case 1:
@@ -36,15 +44,15 @@ public class Voicemeeter {
     }
 
     public void logout() {
-        int val;
-        if ((val = instance.VBVMR_Logout()) != 0) {
+        int val = instance.VBVMR_Logout();
+        if (val != 0) {
             throw new VoicemeeterException("Unexpected function reutrn value. Function returned " + val);
         }
     }
 
     public void runVoicemeeter(int type) {
-        int val;
-        switch (val = instance.VBVMR_RunVoicemeeter(type)) {
+        int val = instance.VBVMR_RunVoicemeeter(type);
+        switch (val) {
             case 0:
                 break;
             case -1:
@@ -55,9 +63,9 @@ public class Voicemeeter {
     }
 
     public int getVoicemeeterType() {
-        int val;
         Pointer type = getPointer(4);
-        switch (val = instance.VBVMR_GetVoicemeeterType(type)) {
+        int val = instance.VBVMR_GetVoicemeeterType(type);
+        switch (val) {
             case 0:
                 return type.getInt(0);
             case -1:
@@ -70,9 +78,9 @@ public class Voicemeeter {
     }
 
     public int getVoicemeeterVersion() {
-        int val;
         Pointer version = getPointer(4);
-        switch (val = instance.VBVMR_GetVoicemeeterVersion(version)) {
+        int val = instance.VBVMR_GetVoicemeeterVersion(version);
+        switch (val) {
             case 0:
                 return version.getInt(0);
             case -1:
@@ -85,8 +93,8 @@ public class Voicemeeter {
     }
 
     public boolean areParametersDirty() {
-        int val;
-        switch (val = instance.VBVMR_IsParametersDirty()) {
+        int val = instance.VBVMR_IsParametersDirty();
+        switch (val) {
             case 0:
                 return false;
             case 1:
@@ -101,11 +109,11 @@ public class Voicemeeter {
     }
 
     public float getParameterFloat(String parameterName) {
-        int val;
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getPointer(4);
+        int val = instance.VBVMR_GetParameterFloat(paramName, paramValue);
 
-        switch (val = instance.VBVMR_GetParameterFloat(paramName, paramValue)) {
+        switch (val) {
             case 0:
                 return paramValue.getFloat(0);
             case -1:
@@ -122,11 +130,11 @@ public class Voicemeeter {
     }
 
     public String getParameterStringA(String parameterName) {
-        int val;
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getPointer(8);
+        int val = instance.VBVMR_GetParameterStringA(paramName, paramValue);
 
-        switch (val = instance.VBVMR_GetParameterStringA(paramName, paramValue)) {
+        switch (val) {
             case 0:
                 return paramValue.getString(0);
             case -1:
@@ -143,11 +151,11 @@ public class Voicemeeter {
     }
 
     public String getParameterStringW(String parameterName) {
-        int val;
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getPointer(8);
+        int val = instance.VBVMR_GetParameterStringW(paramName, paramValue);
 
-        switch (val = instance.VBVMR_GetParameterStringW(paramName, paramValue)) {
+        switch (val) {
             case 0:
                 return paramValue.getString(0);
             case -1:
@@ -164,10 +172,10 @@ public class Voicemeeter {
     }
 
     public float getLevel(int type, int channel) {
-        int val;
         Pointer levelValue = getPointer(4);
+        int val = instance.VBVMR_GetLevel(type, channel, levelValue);
 
-        switch (val = instance.VBVMR_GetLevel(type, channel, levelValue)) {
+        switch (val) {
             case 0:
                 return levelValue.getFloat(0);
             case -1:
@@ -184,10 +192,10 @@ public class Voicemeeter {
     }
 
     public byte[] getMidiMessage(int size) {
-        int val;
         Pointer midiMessage = getPointer(size);
+        int val = instance.VBVMR_GetMidiMessage(midiMessage, size);
 
-        switch (val = instance.VBVMR_GetMidiMessage(midiMessage, size)) {
+        switch (val) {
             case -1:
                 throw new VoicemeeterException("An error has occurred");
             case -2:
@@ -204,10 +212,10 @@ public class Voicemeeter {
     }
 
     public void setParameterFloat(String parameterName, float value) {
-        int val;
         Pointer paramName = getStringPointer(parameterName);
+        int val = instance.VBVMR_SetParameterFloat(paramName, value);
 
-        switch (val = instance.VBVMR_SetParameterFloat(paramName, value)) {
+        switch (val) {
             case 0:
                 break;
             case -1:
@@ -222,11 +230,11 @@ public class Voicemeeter {
     }
 
     public void setParameterStringA(String parameterName, String value) {
-        int val;
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getStringPointer(value);
+        int val = instance.VBVMR_SetParameterStringA(paramName, paramValue);
 
-        switch (val = instance.VBVMR_SetParameterStringA(paramName, paramValue)) {
+        switch (val) {
             case 0:
                 break;
             case -1:
@@ -241,11 +249,11 @@ public class Voicemeeter {
     }
 
     public void setParameterStringW(String parameterName, String value) {
-        int val;
         Pointer paramName = getStringPointer(parameterName);
         Pointer paramValue = getStringPointer(value);
+        int val = instance.VBVMR_SetParameterStringW(paramName, paramValue);
 
-        switch (val = instance.VBVMR_SetParameterStringW(paramName, paramValue)) {
+        switch (val) {
             case 0:
                 break;
             case -1:
@@ -260,10 +268,10 @@ public class Voicemeeter {
     }
 
     public void setParameters(String script) {
-        int val;
-        Pointer scriptP = getStringPointer(script);
+        Pointer stringPointer = getStringPointer(script);
+        int val = instance.VBVMR_SetParameters(stringPointer);
 
-        switch (val = instance.VBVMR_SetParameters(scriptP)) {
+        switch (val) {
             case 0:
                 break;
             case -1:
@@ -281,10 +289,10 @@ public class Voicemeeter {
     }
 
     public void setParametersW(String script) {
-        int val;
-        Pointer scriptP = getStringPointer(script);
+        Pointer stringPointer = getStringPointer(script);
+        int val = instance.VBVMR_SetParametersW(stringPointer);
 
-        switch (val = instance.VBVMR_SetParametersW(scriptP)) {
+        switch (val) {
             case 0:
                 break;
             case -1:
@@ -316,13 +324,13 @@ public class Voicemeeter {
         Pointer hardwareId = getPointer(4);
 
         if (isInputDevice) {
-            if ((val = instance.VBVMR_Input_GetDeviceDescA(index, type, name, hardwareId)) != 0) {
+            val = instance.VBVMR_Input_GetDeviceDescA(index, type, name, hardwareId);
+            if (val != 0)
                 throw new VoicemeeterException("Unexpected function return value. Function returned " + val);
-            }
         } else {
-            if ((val = instance.VBVMR_Output_GetDeviceDescA(index, type, name, hardwareId)) != 0) {
+            val = instance.VBVMR_Output_GetDeviceDescA(index, type, name, hardwareId);
+            if (val != 0)
                 throw new VoicemeeterException("Unexpected function return value. Function returned " + val);
-            }
         }
 
         DeviceDescription desc = new DeviceDescription();
@@ -340,13 +348,13 @@ public class Voicemeeter {
         Pointer hardwareId = getPointer(4);
 
         if (isInputDevice) {
-            if ((val = instance.VBVMR_Input_GetDeviceDescW(index, type, name, hardwareId)) != 0) {
+            val = instance.VBVMR_Input_GetDeviceDescW(index, type, name, hardwareId);
+            if (val != 0)
                 throw new VoicemeeterException("Unexpected function return value. Function returned " + val);
-            }
         } else {
-            if ((val = instance.VBVMR_Output_GetDeviceDescW(index, type, name, hardwareId)) != 0) {
+            val = instance.VBVMR_Output_GetDeviceDescW(index, type, name, hardwareId);
+            if (val != 0)
                 throw new VoicemeeterException("Unexpected function return value. Function returned " + val);
-            }
         }
 
         DeviceDescription desc = new DeviceDescription();
